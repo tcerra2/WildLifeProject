@@ -1,0 +1,5 @@
+@echo off
+cd /d "%~dp0wildlife_detector_starter_repo_integrated (1)"
+call ..\venv\Scripts\activate
+streamlit run app\main.py
+pause
