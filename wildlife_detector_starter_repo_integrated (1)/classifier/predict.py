@@ -1,12 +1,26 @@
+import streamlit as st
 
-def predict(component):
-    # Dummy classifier: classify based on timing pattern
-    if len(component) == 0:
-        return "No signal"
-    avg_time = sum(component) / len(component)
-    if avg_time < 1.5:
-        return "Species A"
-    elif avg_time < 3.0:
-        return "Species B"
-    else:
-        return "Species C"
+import librosa
+import numpy as np
+
+def predict(audio_path):
+    try:
+        # Load the audio
+        y, sr = librosa.load(audio_path, sr=None)
+
+        # Extract features
+        mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+        zcr = np.mean(librosa.feature.zero_crossing_rate(y))
+        centroid = np.mean(librosa.feature.spectral_centroid(y=y, sr=sr))
+
+        # Basic thresholds (these are just sample logic)
+        if centroid < 2000 and zcr < 0.1:
+            return "Species A"
+        elif centroid < 4000:
+            return "Species B"
+        else:
+            return "Species C"
+
+    except Exception as e:
+        return f"Error during prediction: {str(e)}"
+
